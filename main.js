@@ -20,6 +20,7 @@ let app = new Vue({
         this.paragraphNumber = this.findParagraphs();
         this.characterNumber = this.findCharacters();
         this.frequentLetter = this.findLetter();
+        this.longestWord = this.findLongestWord();
 
 
 
@@ -114,13 +115,25 @@ let app = new Vue({
         return letter;
 
 
+      },
+
+      findLongestWord: function () {
+        let strSplit = this.text.replace(/\./g,' ')
+        strSplit = strSplit.split(" ");
+        console.log(strSplit);
+        let longestWordNumber = 0;
+        let longestWord = "";
+        for(let i = 0; i < strSplit.length; i++){
+          if(strSplit[i].length > longestWord.length){
+	           longestWordNumber = strSplit[i].length;
+             longestWord = strSplit[i];
+           }
+         }
+         console.log(longestWord);
+         console.log(longestWordNumber);
+         return longestWord;
       }
 
     }
-
-
-
-
-
 
 });
