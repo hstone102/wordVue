@@ -1,8 +1,19 @@
+Vue.component("line-chart", {
+  extends: VueChartJs.Line,
+  props: ["chartData", "options"],
+  mixins: [VueChartJs.mixins.reactiveProp],
+  mounted() {
+    this.renderChart(this.chartData, this.options);
+  }
+});
+
 let app = new Vue({
 
     el: "#app",
 
     data: {
+        chartData: null,
+        options: { responsive: true, maintainAspectRatio: false},
         sentenceNumber: 1,
         wordNumber: 20,
         paragraphNumber: 5,
@@ -21,13 +32,7 @@ let app = new Vue({
         this.characterNumber = this.findCharacters();
         this.frequentLetter = this.findLetter();
         this.longestWord = this.findLongestWord();
-
-
-
       },
-
-
-
 
       findSentences: function () {
         let count = 0;
@@ -77,12 +82,16 @@ let app = new Vue({
 
       findLetter: function () {
         str = this.text.replace(/\s/g, '');
+        str = str.replace(/[.,\/#!$%\^&\*;:{}=\-_`'~()]/g,"");
         str = str.toLowerCase();
         var a = str.split("");
         var obj = {};
         let b = [];
         let largest = 0;
         let index = 0;
+        let c = [];
+        let d = [];
+
         a.forEach(function(s){
           var count=0;
           for(var j=0;j<a.length;j++){
@@ -95,19 +104,34 @@ let app = new Vue({
         });
         for (var key in obj) {
           if (obj.hasOwnProperty(key)) {
-
-            console.log(key + " -> " + obj[key]);
             b.push([key, obj[key]]);
-            console.log(b);
+            c.push([key]);
+            d.push([obj[key]]);
           }
 
         }
+        this.chartData = {
+          labels: c,
+          datasets: [
+            {
+              label: "Most Frequent Letter",
+              backgroundColor: "#f87979",
+              data: d,
+            }
+          ]
+        };
+        var ctx = this.$refs.myChart.getContext('2d');
+        var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: this.chartData,
+
+        });
         for (let j = 0; j < b.length; j++){
           if (b[j][1] > largest){
             largest = b[j][1];
             letter = b[j][0];
-            console.log(largest);
-            console.log(b[j]);
+            //console.log(largest);
+            //console.log(b[j]);
           }
 
         }
@@ -120,7 +144,7 @@ let app = new Vue({
       findLongestWord: function () {
         let strSplit = this.text.replace(/\./g,' ')
         strSplit = strSplit.split(" ");
-        console.log(strSplit);
+        //console.log(strSplit);
         let longestWordNumber = 0;
         let longestWord = "";
         for(let i = 0; i < strSplit.length; i++){
@@ -129,8 +153,6 @@ let app = new Vue({
              longestWord = strSplit[i];
            }
          }
-         console.log(longestWord);
-         console.log(longestWordNumber);
          return longestWord;
       }
 
