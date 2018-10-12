@@ -14,14 +14,15 @@ let app = new Vue({
     data: {
         chartData: null,
         options: { responsive: true, maintainAspectRatio: false},
-        sentenceNumber: 1,
-        wordNumber: 20,
-        paragraphNumber: 5,
-        characterNumber: 6,
-        frequentLetter: "a",
-        longestWord: "bat",
+        sentenceNumber: 0,
+        wordNumber: 3,
+        paragraphNumber: 1,
+        characterNumber: 7,
+        frequentLetter: "e",
+        longestWord: "here",
         text: "Here I am"
     },
+
 
     methods: {
 
@@ -82,7 +83,7 @@ let app = new Vue({
 
       findLetter: function () {
         str = this.text.replace(/\s/g, '');
-        str = str.replace(/[.,\/#!$%\^&\*;:{}=\-_`'~()]/g,"");
+        str = str.replace(/[.,\/1234567890#!$%\^&\*;:{}=\-_`'~()]/g,"");
         str = str.toLowerCase();
         var a = str.split("");
         var obj = {};
@@ -105,25 +106,80 @@ let app = new Vue({
         for (var key in obj) {
           if (obj.hasOwnProperty(key)) {
             b.push([key, obj[key]]);
+            b.sort((a,b) => a[0].localeCompare(b[0]));
+            console.log(b);
             c.push([key]);
             d.push([obj[key]]);
           }
-
         }
+
         this.chartData = {
           labels: c,
           datasets: [
             {
               label: "Most Frequent Letter",
-              backgroundColor: "#f87979",
+              fontSize: 20,
+              backgroundColor: "#f879e9",
+              fontColor: 'white',
               data: d,
             }
           ]
         };
+
         var ctx = this.$refs.myChart.getContext('2d');
         var myChart = new Chart(ctx, {
           type: 'bar',
           data: this.chartData,
+          options: {
+                legend: {
+                    labels: {
+                // This more specific font property overrides the global property
+                    fontColor: 'white',
+                    fontSize: 20
+                    }
+                  },
+                  scales: {
+                    xAxes: [{
+                      ticks: {
+                        beginAtZero: true,
+                        fontColor: 'white', // labels such as 10, 20, etc
+                        fontSize: 14,
+                        showLabelBackdrop: false // hide square behind text
+                      },
+                        gridlines: {
+                            color: 'white'
+                        },
+                        display: true,
+                        stacked: true,
+                        scaleLabel: {
+                          display: true,
+                          fontColor: 'white',
+                          labelString: 'Letter'
+                        }
+                    }],
+                      yAxes: [{
+                        ticks: {
+                          beginAtZero: true,
+                          fontColor: 'white', // labels such as 10, 20, etc
+                          fontSize: 14,
+                          showLabelBackdrop: false // hide square behind text
+                        },
+                          gridlines: {
+                              color: 'white'
+                          },
+                          pointLabels: {
+                            fontColor: 'white' // labels around the edge like 'Running'
+                          },
+                          display: true,
+                          stacked: true,
+                          scaleLabel: {
+                            display: true,
+                            fontColor: 'white',
+                            labelString: 'Frequency'
+                          }
+                      }]
+                  }
+                }
 
         });
         for (let j = 0; j < b.length; j++){
