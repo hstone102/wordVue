@@ -9,7 +9,7 @@ Vue.component("line-chart", {
 
 let app = new Vue({
 
-    el: "#app",
+    el: "#app", 
 
     data: {
         chartData: null,
